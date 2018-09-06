@@ -53,7 +53,7 @@ export default {
   data() {
     return {
       timer: null, // 定时器
-      active: this.slideTo,
+      active: this.current,
       previous: !this.loop, //上下可点击，循环时就一直是false
       next: false,
       pages: 0, //共有多少页
@@ -67,9 +67,10 @@ export default {
       type: Number,
       default: 360
     },
+    // 目前支持 fade 和 slide 两种
     animation: {
       type: String,
-      default: "fade" //fade和slide两种
+      default: "fade"
     },
     // 停留时间，毫秒
     interval: {
@@ -91,8 +92,8 @@ export default {
       type: Boolean,
       default: true
     },
-    slideTo: {
-      //滑动到第几个
+    // 当前显示第几个，默认第一个
+    current: {
       type: Number,
       default: 0
     },
@@ -106,8 +107,8 @@ export default {
       type: Boolean,
       default: true
     },
+    // 动画过渡时间，单位毫秒
     speed: {
-      //动画过度时间，单位毫秒
       type: Number,
       default: 300
     },
@@ -119,7 +120,7 @@ export default {
       return {
         width: this.conWidth * this.pages + "px",
         overflow: "hidden",
-        transform: `translate(${this.moveWidth},0)`,
+        transform: `translate(${this.moveWidth}, 0)`,
         transition: `transform ${this.speed / 1000}s`
       };
     }
@@ -137,8 +138,8 @@ export default {
     });
   },
   watch: {
-    active(val, oldval) {
-      this.controlClass(this.animation, false, oldval);
+    active(val, oldVal) {
+      this.controlClass(this.animation, false, oldVal);
       this.controlClass(this.animation, true, val);
       this.slideAfter ? this.slideAfter(val) : "";
     }
@@ -189,56 +190,29 @@ export default {
         }
       }
     },
-    // 点击下方导航
-    handleClickPointer(i) {
-      console.log("current: %o, active: %o", i, this.active);
-    },
-    hasClass(elements, cName) {
-      return !!elements.className.match(
-        new RegExp("(\\s|^)" + cName + "(\\s|$)")
-      );
-    },
-    addClass(elements, cName) {
-      if (!this.hasClass(elements, cName)) {
-        if (elements.className) {
-          elements.className += " " + cName;
-        } else {
-          elements.className += cName;
-        }
-      }
-    },
-    removeClass(elements, cName) {
-      if (this.hasClass(elements, cName)) {
-        elements.className = elements.className.replace(
-          new RegExp("(\\s|^)" + cName + "(\\s|$)"),
-          ""
-        );
-      }
-    },
+    // 控制样式
     controlClass(animation, show, index) {
       let el = this.$children[index].$el;
 
       if (animation === "fade") {
         if (show) {
-          this.addClass(el, "active");
           el.style.opacity = 1;
           el.style.zIndex = 1;
         } else {
-          this.removeClass(el, "active");
           el.style.opacity = 0;
-          el.style.zIndex = "";
+          el.style.zIndex = 0;
         }
       } else if (animation === "slide") {
         if (show) {
-          //left
-          this.addClass(el, "active");
           this.moveWidth = -this.conWidth * index + "px";
         } else {
-          //right
-          this.removeClass(el, "active");
           this.moveWidth = this.conWidth * index + "px";
         }
       }
+    },
+    // 点击下方导航
+    handleClickPointer(i) {
+      console.log("current: %o, active: %o", i, this.active);
     }
   }
 };
