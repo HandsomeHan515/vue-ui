@@ -9,8 +9,9 @@ import Collapse from './components/Collapse'
 import CollapseItem from './components/CollapseItem'
 import Carousel from './components/Carousel'
 import CarouselItem from './components/CarouselItem'
+import Message from './components/message/Message'
 
-import './assets/carousel.scss'
+import './assets/index.scss'
 
 Vue.config.productionTip = false
 Vue.component('b-tabs', Tabs)
@@ -19,6 +20,7 @@ Vue.component('b-collapse', Collapse)
 Vue.component('b-collapse-item', CollapseItem)
 Vue.component('b-carousel', Carousel)
 Vue.component('b-carousel-item', CarouselItem)
+Vue.component('b-message', Message)
 
 /* eslint-disable no-new */
 new Vue({
