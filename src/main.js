@@ -10,6 +10,7 @@ import CollapseItem from './components/CollapseItem'
 import Carousel from './components/Carousel'
 import CarouselItem from './components/CarouselItem'
 import Message from './components/message/Message'
+import DatePicker from './components/date-picker'
 
 import './assets/index.scss'
 
@@ -21,6 +22,7 @@ Vue.component('b-collapse-item', CollapseItem)
 Vue.component('b-carousel', Carousel)
 Vue.component('b-carousel-item', CarouselItem)
 Vue.component('b-message', Message)
+Vue.use(DatePicker)
 
 /* eslint-disable no-new */
 new Vue({

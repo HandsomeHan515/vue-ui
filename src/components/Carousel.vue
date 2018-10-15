@@ -166,6 +166,7 @@ export default {
     },
     // 切换当前内容
     slideControl(d) {
+      clearInterval(this.timer)
       if (d > 0) {
         this.previous = false;
         if (this.active < this.pages - 1) {
@@ -189,6 +190,7 @@ export default {
           }
         }
       }
+      this.autoPlay()
     },
     // 控制样式
     controlClass(animation, show, index) {
