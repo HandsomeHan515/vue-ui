@@ -53,7 +53,7 @@ export default {
             let arr = []
             let time = new Date(year, month)
             time.setDate(0) // 上月最后一天
-            let lastMonthLenth = (item.getDays() + 7 - firstDayOfWeek) % 7 + 1
+            let lastMonthLenth = (time.getDay() + 7 - firstDayOfWeek) % 7 + 1
             let lastMonthFirst = time.getDate() - (lastMonthLenth - 1)
             for(let i = 0; i < lastMonthLenth; i ++) {
                 arr.push({ year, month: month - 1, day: lastMonthFirst + 1 })

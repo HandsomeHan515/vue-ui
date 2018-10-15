@@ -39,7 +39,6 @@
                 </slot>
             </span>
         </div>
-
         <div
             v-show="popupVisible"
             class="b-datepicker-popup"
@@ -59,13 +58,13 @@
                     </button>
                 </div>
             </slot>
-            <panel-year
+            <panel
                 :type="innerType"
                 :date-format="innnerDateFormat"
                 :value="curVal"
                 :visible="popupVisible"
                 @select-date="selectDate">
-            </panel-year>
+            </panel>
             <slot name="footer" :confirm="confirmDate">
                 <div v-if="confirm" class="b-datepicker-footer">
                     <button
@@ -84,12 +83,13 @@
 import clickoutside from './directives/clickoutside'
 import { isValidDate, isValidRange, isDateObject, isPlainObject, formatDate, parseDate, throttle, isDateObjecttle } from './utils'
 import PanelYear from './panel/panel-year'
+import Panel from './panel/panel'
 import locale from './mixins/locale'
 import Languages from './locale/language'
 
 export default {
     name: 'b-datepicker',
-    components: { PanelYear },
+    components: { Panel },
     mixins: [ locale ],
     directives: { clickoutside },
     props: {
@@ -109,7 +109,7 @@ export default {
         dateFormat: String,
         type: {
             type: String,
-            default: 'year'
+            default: 'date'
         },
         range: {
             type: Boolean,
@@ -149,7 +149,7 @@ export default {
         },
         inputName: {
             type: String,
-            default: 'year'
+            default: 'date'
         },
         inputClass: {
             type: [ String, Array ],
@@ -334,7 +334,6 @@ export default {
             return true
         },
         selectDate(date) {
-            console.log(date)
             this.curVal = date
             this.updateDate() && this.closePopup()
         },

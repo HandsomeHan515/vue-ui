@@ -25,8 +25,9 @@
         <p v-if="show">hello</p>
       </transition>
     </div> -->
-    <b-datepicker v-model="year" format="YYYY"></b-datepicker>
+    <b-datepicker v-model="year" type="year" format="YYYY"></b-datepicker>
     <b-datepicker v-model="month" type="month" format="YYYY-MM"></b-datepicker>
+    <b-datepicker v-model="date"></b-datepicker>
     <button @click="getTime">获取</button>
   </div>
 </template>
@@ -40,7 +41,8 @@ export default {
       height: 0,
       show: true,
       year: '',
-      month: ''
+      month: '',
+      date: ''
     };
   },
   mounted() {
@@ -48,7 +50,7 @@ export default {
   },
   methods: {
     getTime() {
-      console.log('time', this.year, this.month)
+      console.log('time', this.year, this.month, this.date)
     }
   }
 };
