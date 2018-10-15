@@ -28,6 +28,7 @@
     <b-datepicker v-model="year" type="year" format="YYYY"></b-datepicker>
     <b-datepicker v-model="month" type="month" format="YYYY-MM"></b-datepicker>
     <b-datepicker v-model="date"></b-datepicker>
+    <b-datepicker v-model="time" type='time' format="HH:mm:ss"></b-datepicker>
     <button @click="getTime">获取</button>
   </div>
 </template>
@@ -42,7 +43,8 @@ export default {
       show: true,
       year: '',
       month: '',
-      date: ''
+      date: '',
+      time: ''
     };
   },
   mounted() {
@@ -50,7 +52,7 @@ export default {
   },
   methods: {
     getTime() {
-      console.log('time', this.year, this.month, this.date)
+      console.log('time', this.year, this.month, this.date, this.time)
     }
   }
 };

@@ -42,6 +42,12 @@
                 @click="handleIconYear(1)">
                 &raquo;
             </a>
+            <a
+                v-show="panel === 'TIME'"
+                class="b-time-header"
+                @click="handleTimeHeader">
+                {{timeHeader}}
+            </a>
         </div>
         <div class="b-calendar-content">
             <table-year
@@ -69,6 +75,16 @@
                 :disabled-date="isDisabledDate"
                 @select="selectDate">
             </table-date>
+            <table-time
+                v-show="panel === 'TIME'"
+                :value="value"
+                :minute-step="minuteStep"
+                :disabled-time="isDisabledTime"
+                :time-picker-options="timePickerOptions"
+                :time-type="timeType"
+                @select="selectTime"
+                @pick="pickTime">
+            </table-time>
         </div>
     </div>
 </template>
@@ -76,12 +92,12 @@
 <script>
 import { isValidDate, isDateObject, formatDate } from '../utils'
 import Languages from '../locale/language'
-import ScrollIntoView from '../utils/scroll-into-view'
-import { TableYear, TableMonth, TableDate } from '../base'
+import scrollIntoView from '../utils/scroll-into-view'
+import { TableYear, TableMonth, TableDate, TableTime } from '../base'
 
 export default {
     name: 'b-panel',
-    components: { TableYear, TableMonth, TableDate },
+    components: { TableYear, TableMonth, TableDate, TableTime },
     props: {
         value: {
             default: null,
@@ -290,6 +306,10 @@ export default {
             let maxTime = new Date(date).setHours(23, 59, 59, 999)
             return this.inBefore(maxTime) || this.inAfter(time) || this.inDisabledDays(time)
         },
+        isDisabledTime(date, startAt, endAt) {
+            let time = new Date(date).getTime()
+            return this.inBefore(time, startAt) || this.inAfter(time, endAt) || this.inDisabledDays(time)
+        },
         getSibling () {
             let calendars = this.$parent.$children.filter(v => v.$options.name === this.$options.name)
             let index = calendars.indexOf(this)
@@ -328,6 +348,12 @@ export default {
         },
         handleClickMonth() {
             this.panel = 'MONTH'
+        },
+        handleTimeHeader() {
+            if (this.type === 'time') {
+                return
+            }
+            this.panel = 'DATE'
         }
     }
 }

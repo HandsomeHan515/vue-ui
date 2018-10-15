@@ -52,11 +52,12 @@ export default {
         getDates(year, month, firstDayOfWeek) {
             let arr = []
             let time = new Date(year, month)
+
             time.setDate(0) // 上月最后一天
             let lastMonthLenth = (time.getDay() + 7 - firstDayOfWeek) % 7 + 1
             let lastMonthFirst = time.getDate() - (lastMonthLenth - 1)
             for(let i = 0; i < lastMonthLenth; i ++) {
-                arr.push({ year, month: month - 1, day: lastMonthFirst + 1 })
+                arr.push({ year, month: month - 1, day: lastMonthFirst + i })
             }
 
             time.setMonth(time.getMonth() + 2, 0) // 当前月最后一天
@@ -64,6 +65,13 @@ export default {
             for(let i = 0; i < curMonthLength; i ++) {
                 arr.push({ year, month, day: i + 1 })
             }
+
+            time.setMonth(time.getMonth() + 1, 1) // 下个月第一天
+            let nextMonth = 42 - (lastMonthLenth + curMonthLength)
+            for(let i = 0; i < nextMonth; i ++) {
+                arr.push({ year, month: month + 1, day: i + 1 })
+            }
+
             return arr
         },
         getCellClasses({ year, month, day }) {
@@ -134,7 +142,7 @@ export default {
                                                     class="cell"
                                                     {...attrs}
                                                     title={this.getCellTitle(date)}
-                                                    onClick={this.selectDate.bind(this, date)}>
+                                                    onClick={() => this.selectDate(date)}>
                                                     {date.day}
                                                 </td>
                                             )

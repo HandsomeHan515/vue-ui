@@ -63,7 +63,8 @@
                 :date-format="innnerDateFormat"
                 :value="curVal"
                 :visible="popupVisible"
-                @select-date="selectDate">
+                @select-date="selectDate"
+                @select-time="selectTime">
             </panel>
             <slot name="footer" :confirm="confirmDate">
                 <div v-if="confirm" class="b-datepicker-footer">
@@ -82,7 +83,6 @@
 <script>
 import clickoutside from './directives/clickoutside'
 import { isValidDate, isValidRange, isDateObject, isPlainObject, formatDate, parseDate, throttle, isDateObjecttle } from './utils'
-import PanelYear from './panel/panel-year'
 import Panel from './panel/panel'
 import locale from './mixins/locale'
 import Languages from './locale/language'
@@ -337,6 +337,16 @@ export default {
             this.curVal = date
             this.updateDate() && this.closePopup()
         },
+        selectTime(time, close) {
+            this.curVal = time
+            this.updateDate() && close && this.closePopup()
+        },
+        selectStartTime (time) {
+            this.selectStartDate(time)
+        },
+        selectEndTime (time) {
+            this.selectEndDate(time)
+        },
         selectStartDate(date) {
             this.$set(this.curVal, 0, date)
             if (this.curVal[1]) {
@@ -349,16 +359,6 @@ export default {
                 this.updateDate()
             }
         },
-        // selectTime (time, close) {
-        //     this.currentValue = time
-        //     this.updateDate() && close && this.closePopup()
-        // },
-        // selectStartTime (time) {
-        //     this.selectStartDate(time)
-        // },
-        // selectEndTime (time) {
-        //     this.selectEndDate(time)
-        // },
         showPopup() {
             if (this.disabled) return 
             this.popupVisible = true

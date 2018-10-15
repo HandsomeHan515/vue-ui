@@ -40,22 +40,30 @@ export default {
         }
     },
     methods: {
+        stringifyText(value) {
+            return ('00' + value).slice(String(value).length)
+        },
         selectTime(time) {
             if (!this.disabledTime(time)) {
+                console.log('time', time)
                 this.$emit('select', new Date(time))
             }
         },
         pickTime(time) {
             if (!this.disabledTime(time)) {
-                this.$emit('select', new Date(time))
+                this.$emit('pick', new Date(time))
             }
         },
         getTimeSelectOptions() {
             let result = []
             let options = this.timePickerOptions
 
+            if (!options) {
+                return []
+            }
+
             if (typeof options === 'function') {
-                return options()
+                return options() || []
             }
 
             let { start, end, step } = options
@@ -83,6 +91,107 @@ export default {
         }
     },
     render(h) {
+        let date = new Date(this.value)
+        let disabledTime = typeof this.disabledTime === 'function' && this.disabledTime
+        let pickers = this.getTimeSelectOptions()
 
+        if (Array.isArray(pickers) && pickers.length) {
+            return (
+                <div class="b-panel b-panel-time">
+                    <ul class="b-time-list">
+                        {
+                            pickers = pickers.map(picker => {
+                                let { hours, minutes } = picker.value
+                                let time = new Date(date).setHours(hours, minutes, 0)
+                                return (
+                                    <li
+                                        class={{
+                                            'b-time-picker-item': true,
+                                            cell: true,
+                                            actived: hours === this.curHours && minutes === this.curMinutes,
+                                            disabled: 'disabledTime && disabledTime(time)'
+                                        }}
+                                        onClick={() => this.pickTime(time)}>
+                                        {picker.label}
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul>
+                </div>
+            )
+        }
+        // 小时
+        let hours = Array.apply(null, { length: 24 }).map((_, i) => {
+            let time = new Date(date).setHours(i)
+
+            return (
+                <li
+                    class={{
+                        cell: true,
+                        actived: i === this.curHours,
+                        disabled: disabledTime && disabledTime(time)
+                    }}
+                    onClick={() => this.selectTime(time)}>
+                    {this.stringifyText(i)}
+                </li>
+            )
+        })
+        // 分钟
+        let step = this.minuteStep || 1
+        let length = parseInt(60 / step)
+        let minutes = Array.apply(null, { length }).map((_, i) => {
+            let value = i * step
+            let time = new Date(date).setMinutes(value)
+
+            return (
+                <li
+                    class={{
+                        cell: true,
+                        actived: value === this.curMinutes,
+                        disabled: disabledTime && disabledTime(time)
+                    }}
+                    onClick={() => this.selectTime(time)}>
+                    {this.stringifyText(value)}
+                </li>
+            )
+        })
+        // 秒
+        let seconds = Array.apply(null, { length: 60 }).map((_, i) => {
+            let time = new Date(date).setSeconds(i)
+
+            return(
+                <li
+                    class={{
+                        cell: true,
+                        actived: i === this.curSeconds,
+                        disabled: disabledTime && disabledTime(time)
+                    }}
+                    onClick={() => this.selectTime(time)}>
+                    {this.stringifyText(i)}
+                </li>
+            )
+        })
+
+        let times = [hours, minutes]
+        if (this.minuteStep === 0) {
+            times.push(seconds)
+        }
+
+        return (
+            <div class="b-panel b-panel-time">
+                {
+                    times.map(list => {
+                        return (
+                            <ul 
+                                class='b-time-list' 
+                                style={{ width: 100 / times.length + '%' }}>
+                                {list}
+                            </ul>
+                        )
+                    })
+                }
+            </div>
+        )
     }
 }
