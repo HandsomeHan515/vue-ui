@@ -228,7 +228,12 @@ export default {
                         break
                     case 'time':
                         this.panel = 'TIME'
+                        break
+                    default:
+                        this.panel = 'DATE'
                 }
+            } else {
+                this.panel = 'NONE'
             }
             this.updateNow(this.value)
         },
@@ -247,6 +252,24 @@ export default {
             }
         },
         selectDate(date) {
+            if (this.type === 'datetime') {
+                let time = new Date(date)
+                if (isDateObject(this.value)) {
+                    time.setHours(this.value.getHours(), this.value.getMinutes(), this.value.getSeconds())
+                }
+                if (this.isDisabledTime(time)) {
+                    time.setHours(0, 0, 0, 0)
+                    if (this.notBefore && time.getTime() < new Date(this.notBefore).getTime()) {
+                        time = new Date(this.notBefore)
+                    }
+                    if (this.startAt && time.getTime() < new Date(this.startAt).getTime()) {
+                        time = new Date(this.startAt)
+                    }
+                }
+                this.selectTime(time)
+                this.panel = 'TIME'
+                return
+            }
             this.$emit('select-date', date)
         },
         changeYear (year) {
@@ -351,11 +374,11 @@ export default {
             let month = this.month
             this.changeMonth(month + flag)
             this.$parent.$emit('change-calendar-month', {
-                    month,
-                    flag,
-                    vm: this,
-                    sibling: this.getSibling()
-                })
+                month,
+                flag,
+                vm: this,
+                sibling: this.getSibling()
+            })
         },
         handleClickYear() {
             this.panel = 'YEAR'
@@ -364,9 +387,7 @@ export default {
             this.panel = 'MONTH'
         },
         handleTimeHeader() {
-            if (this.type === 'time') {
-                return
-            }
+            if (this.type === 'time') return
             this.panel = 'DATE'
         }
     }

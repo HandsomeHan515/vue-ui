@@ -30,9 +30,12 @@
     <b-datepicker v-model="date"></b-datepicker>
     <b-datepicker v-model="date2" shortcuts></b-datepicker>
     <b-datepicker v-model="time" type='time' format="HH:mm:ss"></b-datepicker>
-
     <b-datepicker v-model="arr" range></b-datepicker>
-     <b-datepicker v-model="arr2" range shortcuts></b-datepicker>
+    <b-datepicker v-model="arr2" range shortcuts></b-datepicker>
+
+    <b-datepicker v-model="datetime" type='datetime' format='YYYY-MM-DD HH:mm:ss'></b-datepicker>
+    <b-datepicker v-model="datetime2" range type='datetime' format='YYYY-MM-DD HH:mm:ss'></b-datepicker>
+
     <button @click="getTime">获取</button>
   </div>
 </template>
@@ -51,7 +54,9 @@ export default {
       date2: '',
       time: '',
       arr: '',
-      arr2: []
+      arr2: [],
+      datetime: '',
+      datetime2: ''
     };
   },
   mounted() {
@@ -59,7 +64,7 @@ export default {
   },
   methods: {
     getTime() {
-      console.log('time', this.year, this.month, this.date, this.date2, this.time, this.arr, this.arr2)
+      console.log('time', this.year, this.month, this.date, this.date2, this.time, this.arr, this.arr2, this.datetime, this.datetime2)
     }
   }
 };
