@@ -115,26 +115,31 @@ $primary-color: #1284e7;
 }
 
 .b-shortcuts-wrapper {
+  padding-top: 10px;
+  height: 100%;
+  position: absolute;
+  left: -93px;
+  top: 0;
+  width: 93px;
   text-align: left;
-  padding: 0 12px;
-  line-height: 34px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: #F8F8F9;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  z-index: 1000;
+  font-size: 18px;
   .b-shortcuts {
+    display: block;
+    line-height: 24px;
     background: none;
     outline: none;
     border: 0;
     color: inherit;
     margin: 0;
+    margin-left: 10px;
     padding: 0;
     white-space: nowrap;
     cursor: pointer;
     &:hover {
       color: mix(#fff, $primary-color, 20%);
-    }
-    &:after {
-      content: '|';
-      margin: 0 10px;
-      color: #48576a;
     }
   }
 }
@@ -220,10 +225,12 @@ $primary-color: #1284e7;
     cursor: pointer;
     &:hover {
       background-color: #eaf8fe;
+      border-radius: 6px;
     }
     &.actived {
       color: #fff;
       background-color: $primary-color;
+      border-radius: 6px;
     }
     &.inrange {
       background-color: #eaf8fe;

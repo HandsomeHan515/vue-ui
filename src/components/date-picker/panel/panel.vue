@@ -275,6 +275,20 @@ export default {
         pickTime (time) {
             this.$emit('select-time', time, true)
         },
+        // Todo
+        getCriticalTime(value) {
+            if (!value) return null
+
+            let date = new Date()
+            if (this.type === 'year') {
+                return new Date(date.getFullYear(), 0).getMonth()
+            } else if (this.type === 'month') {
+                return new Date(date.getFullYear(), date.getMonth()).getTime()
+            } else if (this.type === 'date') {
+                return date.setHours(0, 0, 0, 0)
+            }
+            return date.getTime()
+        },
         inBefore (time, startAt) {
             startAt = startAt || this.startAt
             return (this.notBeforeTime && time < this.notBeforeTime) || (startAt && time < this.getCriticalTime(startAt))

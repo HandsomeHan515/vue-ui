@@ -57,8 +57,21 @@
                         {{range.text}}
                     </button>
                 </div>
+                <div
+                    v-if="!range && innerShortcuts.length"
+                    class="b-shortcuts-wrapper">
+                    <button
+                        type="button"
+                        class="b-shortcuts"
+                        v-for="(range, index) in innerShortcutsTwo"
+                        :key="index"
+                        @click="selectRange(range)">
+                        {{range.text}}
+                    </button>
+                </div>
             </slot>
             <panel
+                v-if="!range"
                 :type="innerType"
                 :date-format="innnerDateFormat"
                 :value="curVal"
@@ -66,6 +79,31 @@
                 @select-date="selectDate"
                 @select-time="selectTime">
             </panel>
+            <div v-else class="b-range-wrapper">
+                <panel
+                    style="box-shadow: 1px 0 rgba(0, 0, 0, .1)"
+                    v-bind="$attrs"
+                    :type="innerType"
+                    :date-format="innnerDateFormat"
+                    :value="curVal[0]"
+                    :end-at="curVal[1]"
+                    :start-at="null"
+                    :visible="popupVisible"
+                    @select-date="selectStartDate"
+                    @select-time="selectStartTime">
+                </panel>
+                <panel
+                    v-bind="$attrs"
+                    :type="innerType"
+                    :date-format="innnerDateFormat"
+                    :value="curVal[1]"
+                    :start-at="curVal[0]"
+                    :end-at="null"
+                    :visible="popupVisible"
+                    @select-date="selectEndDate"
+                    @select-time="selectEndTime">
+                </panel>
+            </div>
             <slot name="footer" :confirm="confirmDate">
                 <div v-if="confirm" class="b-datepicker-footer">
                     <button
@@ -84,13 +122,11 @@
 import clickoutside from './directives/clickoutside'
 import { isValidDate, isValidRange, isDateObject, isPlainObject, formatDate, parseDate, throttle, isDateObjecttle } from './utils'
 import Panel from './panel/panel'
-import locale from './mixins/locale'
 import Languages from './locale/language'
 
 export default {
     name: 'b-datepicker',
     components: { Panel },
-    mixins: [ locale ],
     directives: { clickoutside },
     props: {
         value: null,
@@ -145,7 +181,7 @@ export default {
         },
         shortcuts: {
             type: [Boolean, Array],
-            default: true
+            default: false
         },
         inputName: {
             type: String,
@@ -188,7 +224,7 @@ export default {
         },
         innerPlaceholder() {
             if (typeof this.placeholder === 'string')  return this.placeholder
-            return this.range ? this.t('placeholder.dateRange') : this.t('placeholder.date')
+            return this.range ? Languages.zh.placeholder.dateRange : Languages.zh.placeholder.date
         },
         text() {
             if (this.userInput !== null) return this.userInput
@@ -211,37 +247,65 @@ export default {
         innerType() {
             return String(this.type).toLowerCase()
         },
-        innerShortcuts() {
+        innerShortcutsTwo() {
             if (Array.isArray(this.shortcuts)) return this.shortcuts
             if (this.shortcuts === false) return []
-            let pickers = this.t('pickers')
+            let pickers = Languages.zh.pickers2
             // TODO 
             const arr = [
                 {
                     text: pickers[0],
                     onClick (self) {
-                        self.currentValue = [ new Date(), new Date(Date.now() + 3600 * 1000 * 24 * 7) ]
+                        let _date = new Date()
+                        _date.setHours(0, 0, 0, 0)
+                        self.curVal = new Date(_date)
                         self.updateDate(true)
                     }
                 },
                 {
                     text: pickers[1],
                     onClick (self) {
-                        self.currentValue = [ new Date(), new Date(Date.now() + 3600 * 1000 * 24 * 30) ]
+                        let _date = new Date()
+                        _date.setHours(0, 0, 0, 0)
+                        let preDate =  _date - (3600 * 1000 * 24)
+                        self.curVal = new Date(preDate)
                         self.updateDate(true)
                     }
                 },
                 {
                     text: pickers[2],
                     onClick (self) {
-                        self.currentValue = [ new Date(Date.now() - 3600 * 1000 * 24 * 7), new Date() ]
+                        self.curVal = new Date(Date.now() - 3600 * 1000 * 24 * 7)
+                        self.updateDate(true)
+                    }
+                }
+            ]
+            return arr
+        },
+        innerShortcuts() {
+            if (Array.isArray(this.shortcuts)) return this.shortcuts
+            if (this.shortcuts === false) return []
+            let pickers = Languages.zh.pickers
+            // TODO 
+            const arr = [
+                {
+                    text: pickers[0],
+                    onClick (self) {
+                        self.curVal = [ new Date(Date.now() - 3600 * 1000 * 24 * 7), new Date() ]
                         self.updateDate(true)
                     }
                 },
                 {
-                    text: pickers[3],
+                    text: pickers[1],
                     onClick (self) {
-                        self.currentValue = [ new Date(Date.now() - 3600 * 1000 * 24 * 30), new Date() ]
+                        self.curVal = [ new Date(Date.now() - 3600 * 1000 * 24 * 30), new Date() ]
+                        self.updateDate(true)
+                    }
+                },
+                 {
+                    text: pickers[2],
+                    onClick (self) {
+                        self.curVal = [ new Date(Date.now() - 3600 * 1000 * 24 * 90), new Date() ]
                         self.updateDate(true)
                     }
                 }
@@ -254,7 +318,7 @@ export default {
             return this.format.replace(/[Hh]+.*[msSaAZ]|\[.*?\]/g, '').trim() || 'YYYY-MM-DD'
         },
         innerPopupStyle () {
-            return { ...this.position, ...this.popupStyle }
+            return { ...this.position, ...this.popupStyle, left: this.shortcuts ? '93px': 0 }
         }
     },
     mounted() {
@@ -265,7 +329,7 @@ export default {
         }
         this._displayPopup = throttle(() => {
             if (this.popupVisible) {
-                this.displayPopup()
+                // this.displayPopup()
             }
         }, 200)
         window.addEventListener('resize', this._displayPopup)

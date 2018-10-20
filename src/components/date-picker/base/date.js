@@ -5,14 +5,8 @@ export default {
     name: 'b-table-date',
     props: {
         value: null,
-        startAt: {
-            type: String,
-            default: null
-        },
-        endAt: {
-            type: String,
-            default: null
-        },
+        startAt: null,
+        endAt: null,
         dateFormat: {
             type: String,
             default: 'YYYY-MM-DD'
